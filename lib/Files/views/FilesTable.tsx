@@ -14,6 +14,7 @@ import {
 import { DeleteFileButton } from "../components";
 import { FileId } from "../types";
 import Image from "next/image";
+import { FileText } from "lucide-react";
 
 interface FileRow {
   _id: string;
@@ -33,12 +34,16 @@ const columns: ColumnDef<FileRow>[] = [
           href={`/admin/files/${row.original._id}`}
           className="w-[60px] h-[60px] block relative"
         >
-          <Image
-            src={row.original.url!}
-            alt={row.original.fileName}
-            fill
-            className="object-contain"
-          />
+          {row.original.type?.includes("image") ? (
+            <Image
+              src={row.original.url!}
+              alt={row.original.fileName}
+              fill
+              className="object-contain"
+            />
+          ) : (
+            <FileText className="w-full h-full" />
+          )}
         </TextLink>
       );
     },
@@ -61,6 +66,7 @@ const columns: ColumnDef<FileRow>[] = [
   {
     accessorKey: "size",
     header: "Size",
+    cell: ({ row }) => <Text>{Math.round(row.original.size / 1024)} KB</Text>,
   },
   {
     accessorKey: "_id",
@@ -81,13 +87,6 @@ const columns: ColumnDef<FileRow>[] = [
       </div>
     ),
   },
-  // {
-  //   id: "edit",
-  //   header: "Quick Edit",
-  //   cell: ({ row }) => (
-  //     <QuickEditCourseForm courseId={row.original._id as Id<"courses">} />
-  //   ),
-  // },
   {
     id: "delete",
     header: "Delete",
