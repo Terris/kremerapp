@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
+import { api } from "@/convex/_generated/api";
 import { AdminTable } from "@/lib/Admin";
 import {
   Text,
