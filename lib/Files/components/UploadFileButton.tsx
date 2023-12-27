@@ -5,7 +5,7 @@ import {
   UploadButton as UploadButtonPrimitive,
   UploadFileResponse,
 } from "@xixixao/uploadstuff/react";
-import { api } from "../../../../convex/_generated/api";
+import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/lib/ui";
 import { VariantProps } from "class-variance-authority";

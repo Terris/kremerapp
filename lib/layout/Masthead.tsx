@@ -26,8 +26,8 @@ export function Masthead() {
       )}
       {isAdmin && (
         <div className="flex flex-row gap-8 items-center ml-auto mr-16">
-          <TextLink href="/admin" className="font-bold">
-            Admin
+          <TextLink href="/admin/files" className="font-bold">
+            Files
           </TextLink>
         </div>
       )}
