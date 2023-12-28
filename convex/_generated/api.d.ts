@@ -14,11 +14,13 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as fileTags from "../fileTags.js";
 import type * as fileprocessor from "../fileprocessor.js";
 import type * as files from "../files.js";
 import type * as lib_authorization from "../lib/authorization.js";
 import type * as lib_relationships from "../lib/relationships.js";
 import type * as lib_utils from "../lib/utils.js";
+import type * as tags from "../tags.js";
 import type * as users from "../users.js";
 
 /**
@@ -30,11 +32,13 @@ import type * as users from "../users.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  fileTags: typeof fileTags;
   fileprocessor: typeof fileprocessor;
   files: typeof files;
   "lib/authorization": typeof lib_authorization;
   "lib/relationships": typeof lib_relationships;
   "lib/utils": typeof lib_utils;
+  tags: typeof tags;
   users: typeof users;
 }>;
 export declare const api: FilterApi<

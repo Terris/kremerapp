@@ -22,4 +22,13 @@ export default defineSchema({
     ),
     description: v.optional(v.string()),
   }),
+  tags: defineTable({
+    name: v.string(),
+  }),
+  fileTags: defineTable({
+    fileId: v.id("files"),
+    tagId: v.id("tags"),
+  })
+    .index("by_file", ["fileId"])
+    .index("by_tag", ["tagId"]),
 });

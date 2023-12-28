@@ -27,9 +27,20 @@ export const findById = query({
     await validateIdentity(ctx);
     const file = await ctx.db.get(id);
     if (!file) throw new Error("File not found");
+
+    const url = await ctx.storage.getUrl(file.storageId);
+    const fileTags = await ctx.db
+      .query("fileTags")
+      .filter((q) => q.eq(q.field("fileId"), id))
+      .collect();
+    const tags = await asyncMap(fileTags, async (fileTag) => {
+      const tag = await ctx.db.get(fileTag.tagId);
+      return { ...tag, fileTag: { ...fileTag } };
+    });
     return {
       ...file,
-      url: await ctx.storage.getUrl(file.storageId),
+      url,
+      tags,
     };
   },
 });
