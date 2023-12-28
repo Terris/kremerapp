@@ -26,7 +26,8 @@ export function UploadFileButton({
       uploads: uploaded.map((file) => ({
         storageId: (file.response as any).storageId,
         fileName: file.name,
-        type: file.type,
+        mimeType: file.type,
+        type: file.type.includes("image") ? "image" : "document",
         size: file.size,
       })),
     });

@@ -5,7 +5,7 @@ import { SignInButton, UserButton } from "@clerk/clerk-react";
 import { TextLink } from "@/lib/ui";
 import Link from "next/link";
 import { useMe } from "../providers/MeProvider";
-import { PocketKnife } from "lucide-react";
+import { PocketKnife, Shield } from "lucide-react";
 import { ThemeModeToggle } from "../ui/ThemeModeToggle";
 
 export function Masthead() {
@@ -14,13 +14,19 @@ export function Masthead() {
   return (
     <div className="flex flex-row items-center justify-between w-full px-8 py-2 border-b text-sm leading-none">
       <Link href="/" className="mr-6">
-        <PocketKnife className="text-primary" />
+        <Shield className="text-primary" />
       </Link>
 
       {isAuthenticated && (
         <div className="flex flex-row gap-8 mr-auto ml-4">
-          <TextLink href="/files" className="font-bold">
-            Files
+          <TextLink href="/photos" className="font-bold">
+            Photos
+          </TextLink>
+          <TextLink href="/photos" className="font-bold">
+            Videos
+          </TextLink>
+          <TextLink href="/photos" className="font-bold">
+            Documents
           </TextLink>
         </div>
       )}

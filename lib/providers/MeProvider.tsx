@@ -86,6 +86,9 @@ export const MeProvider = ({ children }: MeProviderProps) => {
 
   const isAdmin = me?.isAdmin;
 
+  const isLoading =
+    !dbUserData || !clerkUserIsLoaded || loadingDBUser || convexAuthIsLoading;
+
   return (
     <MeContext.Provider
       value={{
@@ -93,15 +96,11 @@ export const MeProvider = ({ children }: MeProviderProps) => {
         me,
         meId,
         isAdmin,
-        isLoading:
-          !dbUserData ||
-          !clerkUserIsLoaded ||
-          loadingDBUser ||
-          convexAuthIsLoading,
+        isLoading,
         error: dbError,
       }}
     >
-      {children}
+      {isLoading ? null : children}
     </MeContext.Provider>
   );
 };

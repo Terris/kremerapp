@@ -7,7 +7,7 @@ export async function validateIdentity(
   const identity = await ctx.auth.getUserIdentity();
 
   if (!identity) {
-    throw new Error("Unauthenticated call to mutation");
+    throw new Error("Unauthenticated");
   }
 
   const user = await ctx.db
@@ -18,11 +18,11 @@ export async function validateIdentity(
     .unique();
 
   if (!user) {
-    throw new Error("Unauthenticated call to mutation");
+    throw new Error("Unauthenticated");
   }
 
   if (options?.requireAdminRole && !user.isAdmin) {
-    throw new Error("Admin role required to call mutation");
+    throw new Error("Admin role required");
   }
 
   return { identity, user };
