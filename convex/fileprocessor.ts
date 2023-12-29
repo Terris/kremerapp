@@ -17,10 +17,9 @@ export const saveImageDimensions = internalAction({
 
     if (!file.type.includes("image")) return;
 
-    const imageUrl = await ctx.storage.getUrl(file.storageId);
-    if (!imageUrl) throw new Error("Storage file not found");
+    if (!file.url) throw new Error("Url not stored on file");
 
-    const options = new URL(imageUrl);
+    const options = new URL(file.url);
 
     return new Promise((resolve, reject) => {
       https

@@ -12,6 +12,7 @@ export * from "./LoadingScreen";
 export * from "./Switch";
 export * from "./Table";
 export * from "./Text";
+export * from "./Textarea";
 export * from "./TextLink";
 export * from "./Toast";
 export * from "./Toaster";

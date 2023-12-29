@@ -9,6 +9,7 @@ export default defineSchema({
   }).index("by_token", ["tokenIdentifier"]),
   files: defineTable({
     storageId: v.id("_storage"),
+    url: v.string(),
     fileName: v.string(),
     mimeType: v.string(),
     type: v.string(),
@@ -24,11 +25,16 @@ export default defineSchema({
   }),
   tags: defineTable({
     name: v.string(),
-  }),
+  }).searchIndex("search_name", { searchField: "name" }),
   fileTags: defineTable({
     fileId: v.id("files"),
     tagId: v.id("tags"),
   })
     .index("by_file", ["fileId"])
     .index("by_tag", ["tagId"]),
+  comments: defineTable({
+    fileId: v.id("files"),
+    userId: v.id("users"),
+    text: v.string(),
+  }).index("by_file", ["fileId"]),
 });

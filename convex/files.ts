@@ -7,17 +7,15 @@ import {
   query,
 } from "./_generated/server";
 import { validateIdentity } from "./lib/authorization";
-import { asyncMap } from "convex-helpers";
+import { asyncMap, pruneNull } from "convex-helpers";
+import { Id } from "./_generated/dataModel";
+import { paginationOptsValidator } from "convex/server";
 
 export const all = query({
   args: {},
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     await validateIdentity(ctx);
-    const files = await ctx.db.query("files").collect();
-    return asyncMap(files, async (file) => ({
-      ...file,
-      url: await ctx.storage.getUrl(file.storageId),
-    }));
+    return await ctx.db.query("files").collect();
   },
 });
 
@@ -27,8 +25,6 @@ export const findById = query({
     await validateIdentity(ctx);
     const file = await ctx.db.get(id);
     if (!file) throw new Error("File not found");
-
-    const url = await ctx.storage.getUrl(file.storageId);
     const fileTags = await ctx.db
       .query("fileTags")
       .filter((q) => q.eq(q.field("fileId"), id))
@@ -39,24 +35,59 @@ export const findById = query({
     });
     return {
       ...file,
-      url,
       tags,
     };
   },
 });
 
 export const findAllImages = query({
-  args: {},
+  args: { paginationOpts: paginationOptsValidator },
   handler: async (ctx, args) => {
     await validateIdentity(ctx);
-    const files = await ctx.db
+    return await ctx.db
       .query("files")
       .filter((q) => q.gte(q.field("type"), "image"))
+      .order("desc")
+      .paginate(args.paginationOpts);
+  },
+});
+
+export const searchByTag = query({
+  args: { queryTerm: v.string() },
+  handler: async (ctx, { queryTerm }) => {
+    // search for all tags that match the query term
+    const tagResults = await ctx.db
+      .query("tags")
+      .withSearchIndex("search_name", (q) => q.search("name", queryTerm))
       .collect();
-    return asyncMap(files, async (file) => ({
-      ...file,
-      url: await ctx.storage.getUrl(file.storageId),
-    }));
+
+    // get all fileTags that match the search results
+    const fileIds = await asyncMap(tagResults, async (tag) => {
+      const fileTags = await ctx.db
+        .query("fileTags")
+        .filter((q) => q.eq(q.field("tagId"), tag._id))
+        .collect();
+      return fileTags.map((ft) => ft.fileId);
+    }); // => id[][]
+
+    // flatten and reduce to unique fileIds
+    const flattenedFileIds = fileIds.flat();
+    const uniqueFileIds = flattenedFileIds.reduce((acc, cur) => {
+      const existingFileId = acc.find((id) => id === cur);
+      if (existingFileId) {
+        return acc;
+      } else {
+        return [...acc, cur];
+      }
+    }, [] as Id<"files">[]);
+
+    // get all files that match the unique fileIds
+    const files = await asyncMap(uniqueFileIds, async (fileId) => {
+      return await ctx.db.get(fileId);
+    });
+
+    // return array of non null files
+    return pruneNull(files);
   },
 });
 
@@ -64,9 +95,7 @@ export const generateUploadUrl = mutation({
   args: {},
   handler: async (ctx, args) => {
     await validateIdentity(ctx);
-    const urls = await ctx.storage.generateUploadUrl();
-
-    return urls;
+    return await ctx.storage.generateUploadUrl();
   },
 });
 
@@ -87,9 +116,12 @@ export const saveStorageIds = mutation({
     // save a file record for each upload
     const fileIds = await asyncMap(
       uploads,
-      ({ storageId, fileName, mimeType, type, size }) => {
+      async ({ storageId, fileName, mimeType, type, size }) => {
+        const url = await ctx.storage.getUrl(storageId);
+        if (!url) throw new Error("Storage file url not found");
         return ctx.db.insert("files", {
           storageId,
+          url,
           fileName,
           mimeType,
           type,
@@ -107,6 +139,24 @@ export const saveStorageIds = mutation({
         }
       );
     });
+  },
+});
+
+export const edit = mutation({
+  args: {
+    id: v.id("files"),
+    fileName: v.optional(v.string()),
+    description: v.optional(v.string()),
+  },
+  handler: async (ctx, { id, fileName, description }) => {
+    await validateIdentity(ctx);
+    const existingFile = await ctx.db.get(id);
+    if (!existingFile) throw new Error("File not found");
+    await ctx.db.patch(id, {
+      fileName: fileName ?? existingFile.fileName,
+      description: description ?? existingFile.description,
+    });
+    return true;
   },
 });
 
@@ -128,12 +178,7 @@ export const deleteById = mutation({
 export const findByIdAsMachine = internalQuery({
   args: { id: v.id("files") },
   handler: async (ctx, { id }) => {
-    const file = await ctx.db.get(id);
-    if (!file) throw new Error("File not found");
-    return {
-      ...file,
-      url: await ctx.storage.getUrl(file.storageId),
-    };
+    return await ctx.db.get(id);
   },
 });
 

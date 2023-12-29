@@ -10,6 +10,16 @@ export const all = query({
   },
 });
 
+export const searchByName = query({
+  args: { queryTerm: v.string() },
+  handler: async (ctx, { queryTerm }) => {
+    return await ctx.db
+      .query("tags")
+      .withSearchIndex("search_name", (q) => q.search("name", queryTerm))
+      .collect();
+  },
+});
+
 export const create = mutation({
   args: {
     name: v.string(),

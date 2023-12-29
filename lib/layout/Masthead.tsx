@@ -2,11 +2,12 @@
 
 import * as React from "react";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
-import { TextLink } from "@/lib/ui";
+import { Button, TextLink } from "@/lib/ui";
 import Link from "next/link";
 import { useMe } from "../providers/MeProvider";
-import { PocketKnife, Shield } from "lucide-react";
+import { Lock, PlusCircle, PocketKnife, Shield } from "lucide-react";
 import { ThemeModeToggle } from "../ui/ThemeModeToggle";
+import { UploadFileButton } from "../Files";
 
 export function Masthead() {
   const { isAuthenticated, isAdmin } = useMe();
@@ -18,25 +19,24 @@ export function Masthead() {
       </Link>
 
       {isAuthenticated && (
-        <div className="flex flex-row gap-8 mr-auto ml-4">
-          <TextLink href="/photos" className="font-bold">
-            Photos
-          </TextLink>
-          <TextLink href="/photos" className="font-bold">
-            Videos
-          </TextLink>
-          <TextLink href="/photos" className="font-bold">
-            Documents
-          </TextLink>
-        </div>
+        <>
+          <div className="flex flex-row gap-8 mr-auto ml-4">
+            <TextLink href="/photos" className="font-bold">
+              Photos
+            </TextLink>
+            {isAdmin && (
+              <TextLink
+                href="/admin/files"
+                className="font-bold flex flex-row items-center"
+              >
+                <Lock className="mr-1 w-4 h-4" /> All Files
+              </TextLink>
+            )}
+          </div>
+          <UploadFileButton variant="secondary" size="sm" className="mr-8" />
+        </>
       )}
-      {isAdmin && (
-        <div className="flex flex-row gap-8 items-center ml-auto mr-16">
-          <TextLink href="/admin/files" className="font-bold">
-            Files
-          </TextLink>
-        </div>
-      )}
+
       <div className="flex flex-row items-center justify-between gap-4">
         <ThemeModeToggle />
         <div className="items-center">
