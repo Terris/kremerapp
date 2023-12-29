@@ -2,16 +2,18 @@
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { CreateCommentForm } from "@/lib/Comments/forms";
+import { useFileComments } from "@/lib/Comments/hooks/useFileComments";
 import { FileId } from "@/lib/Files";
 import { useFile } from "@/lib/Files";
 import { EditFileDescriptionForm } from "@/lib/Files/forms";
 import { EditFileNameForm } from "@/lib/Files/forms/EditFileNameForm";
 import { useToast } from "@/lib/hooks";
 import { Breadcrumbs, Button, Input, Loader, Text } from "@/lib/ui";
-import { cn } from "@/lib/utils";
-import { useMutation } from "convex/react";
+import { cn, formatDate } from "@/lib/utils";
+import { useMutation, useQuery } from "convex/react";
 import { Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
-import { Pencil, PlusIcon } from "lucide-react";
+import { Pencil, Plus, PlusCircle, PlusIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -19,8 +21,9 @@ import * as Yup from "yup";
 
 export default function FilePage({ params }: { params: { id: string } }) {
   const { file } = useFile({ id: params.id as FileId });
-  const [editingFileName, setEditingFileName] = useState(false);
+  const { fileComments } = useFileComments({ fileId: params.id as FileId });
   const [editingFileDescription, setEditingFileDescription] = useState(false);
+  const [addingComment, setAddingComment] = useState(false);
 
   if (!file) return <Loader />;
 
@@ -34,41 +37,18 @@ export default function FilePage({ params }: { params: { id: string } }) {
           ]}
         />
       </div>
-      <div className="w-full p-8 flex flex-col md:flex-row justify-start">
-        <div className="md:w-4/5 lg:w-5/6">
+      <div className="w-full p-8 flex flex-col md:flex-row md:justify-between">
+        <div className="md:flex-grow md:flex-shrink">
           <Image
             src={file.url!}
             alt={file.fileName}
             className="rounded mx-auto"
             width={file.dimensions?.width ?? 600}
             height={file.dimensions?.height ?? 600}
+            priority
           />
         </div>
-        <div className="w-full flex flex-col gap-8 py-4 md:w-1/5 md:px-4 md:pt-0 lg:w-1/6">
-          {/* <div>
-            <div className="flex flex-row items-center justify-between">
-              <Text>File name</Text>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setEditingFileName((editing) => !editing)}
-              >
-                <Pencil className="w-3 h-3" />
-              </Button>
-            </div>
-            {editingFileName ? (
-              <EditFileNameForm
-                fileId={file._id}
-                onSuccess={() => setEditingFileName(false)}
-              />
-            ) : (
-              <Text
-                className={cn("text-sm", !file.fileName && "text-gray-500")}
-              >
-                {file.fileName ?? "No description yet."}
-              </Text>
-            )}
-          </div> */}
+        <div className="w-full flex flex-col gap-8 py-4 md:w-[275px] md:flex-shrink-0 md:px-4 md:pt-0">
           <div>
             <div className="flex flex-row items-center justify-between">
               <Text>Description</Text>
@@ -81,10 +61,12 @@ export default function FilePage({ params }: { params: { id: string } }) {
               </Button>
             </div>
             {editingFileDescription ? (
-              <EditFileDescriptionForm
-                fileId={file._id}
-                onSuccess={() => setEditingFileDescription(false)}
-              />
+              <div className="pt-2">
+                <EditFileDescriptionForm
+                  fileId={file._id}
+                  onSuccess={() => setEditingFileDescription(false)}
+                />
+              </div>
             ) : (
               <Text
                 className={cn("text-sm", !file.description && "text-gray-500")}
@@ -94,7 +76,7 @@ export default function FilePage({ params }: { params: { id: string } }) {
             )}
           </div>
           <div>
-            <Text>Tags</Text>
+            <Text className="pb-2">Tags</Text>
             <div className="flex flex-row flex-wrap gap-2">
               {file.tags.length ? (
                 file.tags.map((tag) => (
@@ -107,11 +89,45 @@ export default function FilePage({ params }: { params: { id: string } }) {
               ) : (
                 <Text className="text-gray-500 text-sm">No tags yet.</Text>
               )}
-              <AddFileTagForm fileId={file._id} />
+              <div className="w-full">
+                <AddFileTagForm fileId={file._id} />
+              </div>
             </div>
           </div>
           <div>
-            <Text>Comments</Text>
+            <div className="flex flex-row items-center justify-between">
+              <Text className="pb-2">Comments</Text>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setAddingComment((adding) => !adding)}
+              >
+                <Plus className="w-3 h-3" />
+              </Button>
+            </div>
+            {addingComment && (
+              <div className="pt-2">
+                <CreateCommentForm
+                  fileId={params.id as FileId}
+                  onSuccess={() => setAddingComment(false)}
+                />
+              </div>
+            )}
+            {fileComments && fileComments.length > 0 ? (
+              fileComments?.map((comment) => (
+                <div key={comment._id} className="pb-4">
+                  <Text className="font-bold text-sm pb-1">
+                    {comment.user?.name}
+                  </Text>
+                  <Text className="text-sm pb-1">{comment.text}</Text>
+                  <Text className="text-xs text-gray-500">
+                    {formatDate(comment._creationTime)}
+                  </Text>
+                </div>
+              ))
+            ) : (
+              <Text className="text-gray-500 text-sm">No comments yet.</Text>
+            )}
           </div>
         </div>
       </div>

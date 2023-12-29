@@ -5,6 +5,6 @@ import type { FileId } from "../types";
 export function useFile({ id }: { id: FileId }) {
   const file = useQuery(api.files.findById, { id });
   const isLoading = !file;
-  const error = !isLoading && !file ? "Error loading assessment" : null;
+  const error = !isLoading && !file ? "Error loading file" : null;
   return { file, isLoading, error };
 }

@@ -1,61 +1,66 @@
 import * as Yup from "yup";
-import { Field, FieldProps, Form, Formik } from "formik";
-import { FileId } from "../types";
+import { Field, FieldProps, Form, Formik, FormikHelpers } from "formik";
+import { FileId } from "@/lib/Files";
 import { Button, Textarea } from "@/lib/ui";
-import { useEditFile, useFile } from "../hooks";
+import { useCreateComment } from "../hooks";
 import { useToast } from "@/lib/hooks";
+import { useMe } from "@/lib/providers/MeProvider";
 
 const validationSchema = Yup.object().shape({
-  description: Yup.string(),
+  text: Yup.string(),
 });
 
-interface EditFileDescriptionFormValues {
-  description: string;
+interface CreateCommentFormValues {
+  text: string;
 }
 
-interface EditFileDescriptionFormProps {
+interface CreateCommentFormProps {
   fileId: FileId;
   onSuccess?: () => void;
 }
-export function EditFileDescriptionForm({
+export function CreateCommentForm({
   fileId,
   onSuccess,
-}: EditFileDescriptionFormProps) {
+}: CreateCommentFormProps) {
   const { toast } = useToast();
-  const { file } = useFile({ id: fileId });
-  const { editFile } = useEditFile();
-  async function onSubmit(values: EditFileDescriptionFormValues) {
-    if (values.description === file?.description) return;
+  const { me } = useMe();
+  const { createComment } = useCreateComment();
+  async function onSubmit(
+    values: CreateCommentFormValues,
+    actions: FormikHelpers<CreateCommentFormValues>
+  ) {
+    if (!me) throw new Error("User must be logged in to create comment.");
     try {
-      editFile({ id: fileId, description: values.description });
+      createComment({ fileId, userId: me.id, text: values.text });
       onSuccess?.();
       toast({
         title: "Success!",
-        description: "File description updated.",
+        description: "Comment created.",
       });
+      actions.resetForm();
     } catch (e) {
       toast({
         variant: "destructive",
         title: "Error!",
-        description: "Something went wrong trying to update file description.",
+        description: "Something went wrong trying to create comment.",
       });
     }
   }
 
   return (
-    <Formik<EditFileDescriptionFormValues>
+    <Formik<CreateCommentFormValues>
       initialValues={{
-        description: file?.description ?? "",
+        text: "",
       }}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
       {({ isSubmitting }) => (
         <Form>
-          <Field name="description">
+          <Field name="text">
             {({ field }: FieldProps) => (
               <Textarea
-                placeholder="File description..."
+                placeholder="Add your comment..."
                 className="mr-2"
                 {...field}
               />
