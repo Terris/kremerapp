@@ -86,8 +86,7 @@ export const MeProvider = ({ children }: MeProviderProps) => {
 
   const isAdmin = me?.isAdmin;
 
-  const isLoading =
-    !dbUserData || !clerkUserIsLoaded || loadingDBUser || convexAuthIsLoading;
+  const isLoading = !clerkUserIsLoaded || loadingDBUser || convexAuthIsLoading;
 
   return (
     <MeContext.Provider

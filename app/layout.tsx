@@ -12,9 +12,10 @@ export const metadata = {
 
 interface RootLayoutProps {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }
 
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children, modal }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className={cn("min-h-screen antialiased", fontSans.variable)}>
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <div className="flex flex-col w-full h-full min-h-screen flex-1">
             <Masthead />
             <Main>{children}</Main>
+            {modal}
             <Toaster />
           </div>
         </AppProviders>
