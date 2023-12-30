@@ -36,7 +36,7 @@ export function UploadFileButton({
 
     const params = {
       Bucket: "kremerapp",
-      Key: `${keyPrefixRef.current}-${file.name}`,
+      Key: `${process.env.NEXT_PUBLIC_S3_FOLDER}/${keyPrefixRef.current}-${file.name}`,
       Body: file,
     };
 
@@ -57,7 +57,7 @@ export function UploadFileButton({
       const uploads = await Promise.all(files.map((file) => uploadFile(file)));
       const fileDetails = await Promise.all(
         files.map(async (file) => ({
-          url: `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${keyPrefixRef.current}-${file.name}`,
+          url: `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}/${process.env.NEXT_PUBLIC_S3_FOLDER}/${keyPrefixRef.current}-${file.name}`,
           fileName: file.name,
           mimeType: file.type,
           type: file.type.includes("image") ? "image" : "document",
