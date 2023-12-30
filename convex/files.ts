@@ -140,15 +140,15 @@ export const create = mutation({
 export const edit = mutation({
   args: {
     id: v.id("files"),
-    fileName: v.optional(v.string()),
+    // fileName: v.optional(v.string()),
     description: v.optional(v.string()),
   },
-  handler: async (ctx, { id, fileName, description }) => {
+  handler: async (ctx, { id, description }) => {
     await validateIdentity(ctx);
     const existingFile = await ctx.db.get(id);
     if (!existingFile) throw new Error("File not found");
     await ctx.db.patch(id, {
-      fileName: fileName ?? existingFile.fileName,
+      // fileName: fileName ?? existingFile.fileName,
       description: description ?? existingFile.description,
     });
     return true;
@@ -160,31 +160,6 @@ export const deleteById = mutation({
   handler: async (ctx, { id }) => {
     await validateIdentity(ctx);
     await ctx.db.delete(id);
-    return true;
-  },
-});
-
-/*
-  INTERNAL FUNCTIONS - not callable by clients 
-*/
-export const findByIdAsMachine = internalQuery({
-  args: { id: v.id("files") },
-  handler: async (ctx, { id }) => {
-    return await ctx.db.get(id);
-  },
-});
-
-export const updateDimensionsAsMachine = internalMutation({
-  args: {
-    id: v.id("files"),
-    dimensions: v.object({
-      width: v.optional(v.number()),
-      height: v.optional(v.number()),
-      orientation: v.optional(v.number()),
-    }),
-  },
-  handler: async (ctx, { id, dimensions }) => {
-    await ctx.db.patch(id, { dimensions });
     return true;
   },
 });
