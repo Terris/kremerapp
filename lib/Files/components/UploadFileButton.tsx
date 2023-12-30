@@ -57,7 +57,7 @@ export function UploadFileButton({
       const uploads = await Promise.all(files.map((file) => uploadFile(file)));
       const fileDetails = await Promise.all(
         files.map(async (file) => ({
-          url: `https://kremerapp.s3.amazonaws.com/${keyPrefixRef.current}-${file.name}`,
+          url: `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${keyPrefixRef.current}-${file.name}`,
           fileName: file.name,
           mimeType: file.type,
           type: file.type.includes("image") ? "image" : "document",
