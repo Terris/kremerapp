@@ -17,7 +17,6 @@ export default defineSchema({
       v.object({
         width: v.optional(v.number()),
         height: v.optional(v.number()),
-        orientation: v.optional(v.number()),
       })
     ),
     description: v.optional(v.string()),

@@ -6,9 +6,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { VariantProps } from "class-variance-authority";
 import { Loader, buttonVariants } from "@/lib/ui";
-import { cn } from "@/lib/utils";
-
-type FileWithKey = File & { key: string };
+import { cn, getImageDimensions } from "@/lib/utils";
 
 interface UploadButtonProps extends VariantProps<typeof buttonVariants> {
   className?: string;
@@ -54,17 +52,23 @@ export function UploadFileButton({
     setIsUploading(true);
     keyPrefixRef.current = new Date().toISOString();
     const files = Array.from(event.target.files);
+
     try {
       const uploads = await Promise.all(files.map((file) => uploadFile(file)));
-      if (uploads) {
+      const fileDetails = await Promise.all(
+        files.map(async (file) => ({
+          url: `https://kremerapp.s3.amazonaws.com/${keyPrefixRef.current}-${file.name}`,
+          fileName: file.name,
+          mimeType: file.type,
+          type: file.type.includes("image") ? "image" : "document",
+          size: file.size,
+          dimensions: await getImageDimensions(file),
+        }))
+      );
+
+      if (uploads && fileDetails) {
         await createFileRecords({
-          uploads: files.map((file) => ({
-            url: `https://kremerapp.s3.amazonaws.com/${keyPrefixRef.current}-${file.name}`,
-            fileName: file.name,
-            mimeType: file.type,
-            type: file.type.includes("image") ? "image" : "document",
-            size: file.size,
-          })),
+          uploads: fileDetails,
         });
       } else {
         throw new Error("Upload failed");

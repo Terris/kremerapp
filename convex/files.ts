@@ -108,6 +108,12 @@ export const create = mutation({
         mimeType: v.string(),
         type: v.string(),
         size: v.number(),
+        dimensions: v.optional(
+          v.object({
+            width: v.optional(v.number()),
+            height: v.optional(v.number()),
+          })
+        ),
       })
     ),
   },
@@ -116,7 +122,7 @@ export const create = mutation({
     // save a file record for each upload
     return await asyncMap(
       uploads,
-      async ({ url, fileName, mimeType, type, size }) => {
+      async ({ url, fileName, mimeType, type, size, dimensions }) => {
         if (!url) throw new Error("Storage file url not found");
         return ctx.db.insert("files", {
           url,
@@ -124,6 +130,7 @@ export const create = mutation({
           mimeType,
           type,
           size,
+          dimensions,
         });
       }
     );
