@@ -7,6 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { VariantProps } from "class-variance-authority";
 import { Loader, buttonVariants } from "@/lib/ui";
 import { cn, getImageDimensions } from "@/lib/utils";
+import { useMe } from "@/lib/providers/MeProvider";
 
 interface UploadButtonProps extends VariantProps<typeof buttonVariants> {
   className?: string;
@@ -20,6 +21,7 @@ export function UploadFileButton({
   content,
 }: UploadButtonProps) {
   const { toast } = useToast();
+  const { me } = useMe();
   const [isUploading, setIsUploading] = useState(false);
   const keyPrefixRef = useRef("");
 
@@ -36,7 +38,9 @@ export function UploadFileButton({
 
     const params = {
       Bucket: "kremerapp",
-      Key: `${process.env.NEXT_PUBLIC_S3_FOLDER}/${keyPrefixRef.current}-${file.name}`,
+      Key: `${process.env.NEXT_PUBLIC_S3_FOLDER}/${
+        keyPrefixRef.current
+      }-${file.name.replace(/\s/g, "-")}`,
       Body: file,
     };
 
@@ -58,11 +62,12 @@ export function UploadFileButton({
       const fileDetails = await Promise.all(
         files.map(async (file) => ({
           url: `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}/${process.env.NEXT_PUBLIC_S3_FOLDER}/${keyPrefixRef.current}-${file.name}`,
-          fileName: file.name,
+          fileName: file.name.replace(/\s/g, "-"),
           mimeType: file.type,
           type: file.type.includes("image") ? "image" : "document",
           size: file.size,
           dimensions: await getImageDimensions(file),
+          userId: me?.id,
         }))
       );
 

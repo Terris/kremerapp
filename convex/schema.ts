@@ -20,6 +20,7 @@ export default defineSchema({
       })
     ),
     description: v.optional(v.string()),
+    userId: v.id("users"),
   }),
   tags: defineTable({
     name: v.string(),
