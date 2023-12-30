@@ -8,7 +8,6 @@ export default defineSchema({
     isAdmin: v.optional(v.boolean()),
   }).index("by_token", ["tokenIdentifier"]),
   files: defineTable({
-    storageId: v.id("_storage"),
     url: v.string(),
     fileName: v.string(),
     mimeType: v.string(),

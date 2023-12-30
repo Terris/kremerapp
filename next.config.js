@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "mild-lemur-364.convex.cloud",
+        hostname: "kremerapp.s3.amazonaws.com",
       },
     ],
   },

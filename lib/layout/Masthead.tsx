@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
-import { Button, TextLink } from "@/lib/ui";
+import { TextLink } from "@/lib/ui";
 import Link from "next/link";
 import { useMe } from "../providers/MeProvider";
-import { Lock, PlusCircle, PocketKnife, Shield } from "lucide-react";
+import { Lock, Shield } from "lucide-react";
 import { ThemeModeToggle } from "../ui/ThemeModeToggle";
 import { UploadFileButton } from "../Files";
 

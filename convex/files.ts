@@ -99,11 +99,11 @@ export const generateUploadUrl = mutation({
   },
 });
 
-export const saveStorageIds = mutation({
+export const create = mutation({
   args: {
     uploads: v.array(
       v.object({
-        storageId: v.id("_storage"),
+        url: v.string(),
         fileName: v.string(),
         mimeType: v.string(),
         type: v.string(),
@@ -116,11 +116,9 @@ export const saveStorageIds = mutation({
     // save a file record for each upload
     const fileIds = await asyncMap(
       uploads,
-      async ({ storageId, fileName, mimeType, type, size }) => {
-        const url = await ctx.storage.getUrl(storageId);
+      async ({ url, fileName, mimeType, type, size }) => {
         if (!url) throw new Error("Storage file url not found");
         return ctx.db.insert("files", {
-          storageId,
           url,
           fileName,
           mimeType,
@@ -164,10 +162,7 @@ export const deleteById = mutation({
   args: { id: v.id("files") },
   handler: async (ctx, { id }) => {
     await validateIdentity(ctx);
-    const file = await ctx.db.get(id);
-    if (!file) throw new Error("File not found");
     await ctx.db.delete(id);
-    await ctx.storage.delete(file.storageId);
     return true;
   },
 });
