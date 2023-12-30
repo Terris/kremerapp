@@ -140,15 +140,15 @@ export const create = mutation({
 export const edit = mutation({
   args: {
     id: v.id("files"),
-    // fileName: v.optional(v.string()),
+    fileName: v.optional(v.string()),
     description: v.optional(v.string()),
   },
-  handler: async (ctx, { id, description }) => {
+  handler: async (ctx, { id, fileName, description }) => {
     await validateIdentity(ctx);
     const existingFile = await ctx.db.get(id);
     if (!existingFile) throw new Error("File not found");
     await ctx.db.patch(id, {
-      // fileName: fileName ?? existingFile.fileName,
+      fileName: fileName ?? existingFile.fileName,
       description: description ?? existingFile.description,
     });
     return true;
