@@ -50,7 +50,7 @@ export function UploadFileButton({
   }
 
   async function onSelectFiles(event: ChangeEvent<HTMLInputElement>) {
-    if (event.target.files === null) {
+    if (event.target.files === null || !me) {
       return;
     }
     setIsUploading(true);
@@ -67,7 +67,7 @@ export function UploadFileButton({
           type: file.type.includes("image") ? "image" : "document",
           size: file.size,
           dimensions: await getImageDimensions(file),
-          userId: me?.id,
+          userId: me.id,
         }))
       );
 
