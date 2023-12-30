@@ -114,7 +114,7 @@ export const create = mutation({
   handler: async (ctx, { uploads }) => {
     await validateIdentity(ctx);
     // save a file record for each upload
-    const fileIds = await asyncMap(
+    return await asyncMap(
       uploads,
       async ({ url, fileName, mimeType, type, size }) => {
         if (!url) throw new Error("Storage file url not found");
@@ -127,16 +127,6 @@ export const create = mutation({
         });
       }
     );
-    // schedule an internal task to save the image dimensions
-    await asyncMap(fileIds, (fileId) => {
-      return ctx.scheduler.runAfter(
-        0,
-        internal.fileprocessor.saveImageDimensions,
-        {
-          fileId,
-        }
-      );
-    });
   },
 });
 

@@ -16,7 +16,6 @@ import type {
 } from "convex/server";
 import type * as comments from "../comments.js";
 import type * as fileTags from "../fileTags.js";
-import type * as fileprocessor from "../fileprocessor.js";
 import type * as files from "../files.js";
 import type * as lib_authorization from "../lib/authorization.js";
 import type * as lib_relationships from "../lib/relationships.js";
@@ -35,7 +34,6 @@ import type * as users from "../users.js";
 declare const fullApi: ApiFromModules<{
   comments: typeof comments;
   fileTags: typeof fileTags;
-  fileprocessor: typeof fileprocessor;
   files: typeof files;
   "lib/authorization": typeof lib_authorization;
   "lib/relationships": typeof lib_relationships;
