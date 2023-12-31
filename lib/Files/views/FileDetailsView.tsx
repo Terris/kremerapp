@@ -10,7 +10,7 @@ import { FileId } from "@/lib/Files";
 import { useFile } from "@/lib/Files";
 import { EditFileDescriptionForm } from "@/lib/Files/forms";
 import { AddFileTagForm } from "@/lib/Tags/forms";
-import { Button, LoadingScreen, Text } from "@/lib/ui";
+import { Badge, Button, LoadingScreen, Text } from "@/lib/ui";
 import { cn, formatDate } from "@/lib/utils";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -71,16 +71,16 @@ export function FileDetailsView({ fileId }: { fileId: FileId }) {
               {file.tags.length ? (
                 file.tags.map((tag) => (
                   <Link href={`/tags/${tag?._id}`} key={tag?._id}>
-                    <Button variant="outline" size="sm">
+                    <Badge variant="outline">
                       {tag?.name}{" "}
                       <X
-                        className="w-4 h-4 ml-3 text-gray-500 hover:text-red-500"
+                        className="w-3 h-3 ml-3 text-gray-500 hover:text-red-500"
                         onClick={(e) => {
                           e.preventDefault();
                           removeFileTag({ id: tag.fileTag._id });
                         }}
                       />
-                    </Button>
+                    </Badge>
                   </Link>
                 ))
               ) : (
