@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
-import { TextLink } from "@/lib/ui";
+import { KremerCrest, TextLink } from "@/lib/ui";
 import Link from "next/link";
 import { useMe } from "../providers/MeProvider";
 import { Lock, Shield } from "lucide-react";
@@ -15,7 +15,8 @@ export function Masthead() {
   return (
     <div className="flex flex-row items-center justify-between w-full px-8 py-2 border-b text-sm leading-none">
       <Link href="/" className="mr-6">
-        <Shield className="text-primary" />
+        {/* <Shield className="text-primary" /> */}
+        <KremerCrest className="w-8 h-8" />
       </Link>
 
       {isAuthenticated && (

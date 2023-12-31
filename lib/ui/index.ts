@@ -6,6 +6,7 @@ export * from "./CopyToClipboardButton";
 export * from "./Dialog";
 export * from "./DropdownMenu";
 export * from "./Input";
+export * from "./KremerCrest";
 export * from "./Label";
 export * from "./Loader";
 export * from "./LoadingScreen";
