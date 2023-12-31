@@ -65,6 +65,7 @@ export default function PhotosPage() {
                   className="rounded"
                   width={file.dimensions?.width ?? 600}
                   height={file.dimensions?.height ?? 600}
+                  placeholder="blur"
                 />
               </Link>
             </div>
