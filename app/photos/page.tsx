@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useDebounce } from "@/lib/hooks";
 import { useState } from "react";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 12;
 
 export default function PhotosPage() {
   const { isAuthenticated } = useMe();
@@ -55,7 +55,7 @@ export default function PhotosPage() {
             <Search className="w-4 h-4" />
           </Button>
         </div>
-        <div className="w-full columns-2 md:columns-3 gap-8">
+        <div className="w-full columns-2 md:columns-5 gap-8">
           {filesToDisplay?.map((file) => (
             <div key={file._id} className="pb-8">
               <Link href={`/photos/${file._id}`} className="block">
