@@ -38,3 +38,12 @@ export const setFileTag = mutation({
     }
   },
 });
+
+export const deleteById = mutation({
+  args: { id: v.id("fileTags") },
+  handler: async (ctx, { id }) => {
+    validateIdentity(ctx);
+    await ctx.db.delete(id);
+    return true;
+  },
+});

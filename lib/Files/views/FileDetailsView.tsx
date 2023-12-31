@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Pencil, Plus } from "lucide-react";
+import { Pencil, Plus, X } from "lucide-react";
 import { CreateCommentForm } from "@/lib/Comments/forms";
 import { useFileComments } from "@/lib/Comments/hooks/useFileComments";
 import { FileId } from "@/lib/Files";
@@ -12,10 +12,14 @@ import { EditFileDescriptionForm } from "@/lib/Files/forms";
 import { AddFileTagForm } from "@/lib/Tags/forms";
 import { Button, LoadingScreen, Text } from "@/lib/ui";
 import { cn, formatDate } from "@/lib/utils";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { TagId } from "@/lib/Tags/types";
 
 export function FileDetailsView({ fileId }: { fileId: FileId }) {
   const { file } = useFile({ id: fileId });
   const { fileComments } = useFileComments({ fileId });
+  const removeFileTag = useMutation(api.fileTags.deleteById);
   const [editingFileDescription, setEditingFileDescription] = useState(false);
   const [addingComment, setAddingComment] = useState(false);
 
@@ -68,7 +72,14 @@ export function FileDetailsView({ fileId }: { fileId: FileId }) {
                 file.tags.map((tag) => (
                   <Link href={`/tags/${tag?._id}`} key={tag?._id}>
                     <Button variant="outline" size="sm">
-                      {tag?.name}
+                      {tag?.name}{" "}
+                      <X
+                        className="w-4 h-4 ml-3 text-gray-500 hover:text-red-500"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          removeFileTag({ id: tag.fileTag._id });
+                        }}
+                      />
                     </Button>
                   </Link>
                 ))
