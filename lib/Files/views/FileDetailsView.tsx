@@ -14,7 +14,6 @@ import { Badge, Button, LoadingScreen, Text } from "@/lib/ui";
 import { cn, formatDate } from "@/lib/utils";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { TagId } from "@/lib/Tags/types";
 
 export function FileDetailsView({ fileId }: { fileId: FileId }) {
   const { file } = useFile({ id: fileId });

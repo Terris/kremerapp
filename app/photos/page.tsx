@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useDebounce } from "@/lib/hooks";
 import { useState } from "react";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 36;
 
 export default function PhotosPage() {
   const { isAuthenticated } = useMe();
