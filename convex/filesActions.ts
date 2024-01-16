@@ -30,8 +30,6 @@ export const afterSave = action({
   },
 });
 
-// TODO: rename similarImages to imageComparisons
-
 export const compareImages = action({
   args: { machineToken: v.string() },
   handler: async (ctx, args) => {
@@ -45,17 +43,17 @@ export const compareImages = action({
       { jobName: "compare_images" }
     );
 
-    // if (
-    //   !lastUploadedImage ||
-    //   !lastJobRun ||
-    //   lastUploadedImage?._creationTime < lastJobRun?._creationTime
-    // ) {
-    //   await ctx.runMutation(internal.cronJobRuns.privatelyInsertCronJobRun, {
-    //     jobName: "compare_images",
-    //     result: `No new images to compare`,
-    //   });
-    //   return;
-    // }
+    if (
+      !lastUploadedImage ||
+      !lastJobRun ||
+      lastUploadedImage?._creationTime < lastJobRun?._creationTime
+    ) {
+      await ctx.runMutation(internal.cronJobRuns.privatelyInsertCronJobRun, {
+        jobName: "compare_images",
+        result: `No new images to compare`,
+      });
+      return;
+    }
 
     const allImages = await ctx.runQuery(internal.files.privatelyGetAllImages);
     const allExistingSimilarImages = await ctx.runQuery(
