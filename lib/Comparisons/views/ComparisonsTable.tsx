@@ -20,6 +20,8 @@ interface ComparisonRow {
   image1Id: FileId;
   image2Id: FileId;
   distance: number;
+  diffPercent: number;
+  average: number;
   image1: FileDoc;
   image2: FileDoc;
 }
@@ -79,6 +81,16 @@ const columns: ColumnDef<ComparisonRow>[] = [
     cell: ({ row }) => row.original.distance,
   },
   {
+    accessorKey: "diffPercent",
+    header: "Diff Percent",
+    cell: ({ row }) => row.original.diffPercent,
+  },
+  {
+    accessorKey: "average",
+    header: "Average",
+    cell: ({ row }) => row.original.average,
+  },
+  {
     accessorKey: "_id",
     header: "ID",
     cell: ({ row }) => (
@@ -100,17 +112,17 @@ const columns: ColumnDef<ComparisonRow>[] = [
 ];
 
 export const ComparisonsTable = () => {
-  const [maxDistance, setMaxDistance] = useState(0.5);
+  const [maxAverage, setMaxAverage] = useState(0.5);
   const comparisonsData = useQuery(
     api.imageComparisons.findAllCloseComparisons,
-    { maxDistance: maxDistance }
+    { maxAverage }
   );
   if (!comparisonsData) return null;
   return (
     <>
       <Input
-        value={maxDistance}
-        onChange={(e) => setMaxDistance(Number(e.currentTarget.value))}
+        value={maxAverage}
+        onChange={(e) => setMaxAverage(Number(e.currentTarget.value))}
         type="number"
         className="my-4 w-[100px]"
       />

@@ -42,3 +42,7 @@ export function createUniqueCombinations(ids: string[]): string[][] {
 
   return uniqueCombinations;
 }
+
+export function getAverageOnArray(arr: number[]) {
+  return arr.reduce((a, b) => a + b) / arr.length;
+}

@@ -44,6 +44,8 @@ export default defineSchema({
     image1Id: v.id("files"),
     image2Id: v.id("files"),
     distance: v.number(),
+    diffPercent: v.number(),
+    average: v.number(),
   }),
   cronJobRuns: defineTable({
     jobName: v.string(),

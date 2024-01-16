@@ -44,8 +44,8 @@ export const compareImages = action({
     );
 
     if (
-      !lastUploadedImage ||
-      !lastJobRun ||
+      !!lastUploadedImage &&
+      !!lastJobRun &&
       lastUploadedImage?._creationTime < lastJobRun?._creationTime
     ) {
       await ctx.runMutation(internal.cronJobRuns.privatelyInsertCronJobRun, {
@@ -82,14 +82,19 @@ export const compareImages = action({
         const image1 = allImages.find((image) => image._id === imageSet[0]);
         const image2 = allImages.find((image) => image._id === imageSet[1]);
 
-        if (!image1 || !image2 || !image1.hash || !image2.hash) return;
-        const distance = Jimp.compareHashes(image1.hash, image2.hash);
+        if (!image1 || !image2) return;
+        const jimpImage1 = await Jimp.read(image1.url);
+        const jimpImage2 = await Jimp.read(image2.url);
+        const distance = Jimp.distance(jimpImage1, jimpImage2);
+        const diff = Jimp.diff(jimpImage1, jimpImage2);
+
         await ctx.runMutation(
           internal.imageComparisons.privatelyInsertImageComparisons,
           {
             image1Id: image1._id,
             image2Id: image2._id,
             distance,
+            diffPercent: diff.percent,
           }
         );
       }
