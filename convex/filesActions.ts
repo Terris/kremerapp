@@ -33,8 +33,8 @@ export const afterSave = action({
 export const compareImages = action({
   args: {
     machineToken: v.string(),
-    pageSize: v.optional(v.number()),
-    cursor: v.optional(v.string()),
+    pageSize: v.number(),
+    cursor: v.optional(v.string() || v.null()),
   },
   handler: async (ctx, args) => {
     await validateMachineToken(ctx, args.machineToken);
@@ -63,7 +63,7 @@ export const compareImages = action({
       internal.files.privatelyGetAllPaginatedImages,
       {
         paginationOpts: {
-          numItems: args.pageSize ?? 10,
+          numItems: args.pageSize,
           cursor: args.cursor ?? null,
         },
       }
