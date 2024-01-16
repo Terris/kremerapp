@@ -200,7 +200,7 @@ export const privatelyGetAllFiles = internalQuery({
   },
 });
 
-export const privatelyGetAllImages = internalQuery({
+export const privatelyGetAllPaginatedImages = internalQuery({
   args: { paginationOpts: paginationOptsValidator },
   handler: async (ctx, args) => {
     return await ctx.db

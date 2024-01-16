@@ -31,7 +31,11 @@ export const afterSave = action({
 });
 
 export const compareImages = action({
-  args: { machineToken: v.string(), start: v.optional(v.string()) },
+  args: {
+    machineToken: v.string(),
+    pageSize: v.optional(v.number()),
+    cursor: v.optional(v.string()),
+  },
   handler: async (ctx, args) => {
     await validateMachineToken(ctx, args.machineToken);
 
@@ -55,10 +59,15 @@ export const compareImages = action({
       return;
     }
 
-    const allImages = await ctx.runQuery(internal.files.privatelyGetAllImages, {
-      paginationOpts: { numItems: 100, cursor: args.start ?? null },
-    });
-    console.log(allImages);
+    const allImages = await ctx.runQuery(
+      internal.files.privatelyGetAllPaginatedImages,
+      {
+        paginationOpts: {
+          numItems: args.pageSize ?? 10,
+          cursor: args.cursor ?? null,
+        },
+      }
+    );
     const allExistingSimilarImages = await ctx.runQuery(
       internal.imageComparisons.privatelyGetAllImageComparisons
     );
