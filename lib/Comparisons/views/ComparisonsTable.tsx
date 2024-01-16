@@ -2,20 +2,24 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { AdminTable } from "@/lib/Admin";
-import { FileId } from "@/lib/Files";
+import { FileDoc, FileId } from "@/lib/Files";
 import {
   CopyToClipboardButton,
   Text,
+  TextLink,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/lib/ui";
+import Image from "next/image";
 
 interface ComparisonRow {
   _id: string;
   image1Id: FileId;
   image2Id: FileId;
   distance: number;
+  image1: FileDoc;
+  image2: FileDoc;
 }
 
 const columns: ColumnDef<ComparisonRow>[] = [
@@ -28,6 +32,44 @@ const columns: ColumnDef<ComparisonRow>[] = [
     accessorKey: "image2Id",
     header: "Image 2 ID",
     cell: ({ row }) => row.original.image2Id,
+  },
+  {
+    accessorKey: "image1.url",
+    header: "Thumb 1",
+    cell: ({ row }) => {
+      return (
+        <TextLink
+          href={`/admin/files/${row.original._id}`}
+          className="w-[60px] h-[60px] block relative"
+        >
+          <Image
+            src={row.original.image1.url!}
+            alt={row.original.image1.fileName!}
+            fill
+            className="object-contain"
+          />
+        </TextLink>
+      );
+    },
+  },
+  {
+    accessorKey: "image2.url",
+    header: "Thumb 2",
+    cell: ({ row }) => {
+      return (
+        <TextLink
+          href={`/admin/files/${row.original._id}`}
+          className="w-[60px] h-[60px] block relative"
+        >
+          <Image
+            src={row.original.image2.url!}
+            alt={row.original.image2.fileName!}
+            fill
+            className="object-contain"
+          />
+        </TextLink>
+      );
+    },
   },
   {
     accessorKey: "distance",

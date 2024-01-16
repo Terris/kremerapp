@@ -167,6 +167,18 @@ export const deleteById = mutation({
   args: { id: v.id("files") },
   handler: async (ctx, { id }) => {
     await validateIdentity(ctx);
+    // remove comparisons with this file
+    const comparisonsToDelete = await ctx.db
+      .query("imageComparisons")
+      .filter((q) =>
+        q.or(q.eq(q.field("image1Id"), id), q.eq(q.field("image2Id"), id))
+      )
+      .collect();
+    await asyncMap(comparisonsToDelete, async (comparison) => {
+      await ctx.db.delete(comparison._id);
+    });
+
+    // delete the file
     await ctx.db.delete(id);
     return true;
   },

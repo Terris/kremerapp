@@ -1,12 +1,30 @@
 import { v } from "convex/values";
 import { internalMutation, internalQuery, query } from "./_generated/server";
 import { validateIdentity } from "./lib/authorization";
+import { asyncMap } from "convex-helpers";
 
 export const all = query({
   args: {},
   handler: async (ctx, args) => {
     validateIdentity(ctx, { requireAdminRole: true });
-    return await ctx.db.query("imageComparisons").collect();
+    const comparisons = await ctx.db.query("imageComparisons").collect();
+    const comparisonsWithFiles = asyncMap(comparisons, async (comparison) => {
+      const image1 = await ctx.db.get(comparison.image1Id);
+      const image2 = await ctx.db.get(comparison.image2Id);
+
+      if (!image1 || !image2) {
+        throw new Error(
+          `Image comparison ${comparison._id} refers to a file that does not exist`
+        );
+      }
+
+      return {
+        ...comparison,
+        image1,
+        image2,
+      };
+    });
+    return comparisonsWithFiles;
   },
 });
 
@@ -45,7 +63,7 @@ export const privatelyGetAllImageComparisons = internalQuery({
   },
 });
 
-export const privatelyGetImageComparisons = internalQuery({
+export const privatelyGetImageComparisonsByImageId = internalQuery({
   args: { image1Id: v.id("files"), image2Id: v.id("files") },
   handler: async (ctx, args) => {
     return await ctx.db
