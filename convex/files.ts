@@ -201,13 +201,13 @@ export const privatelyGetAllFiles = internalQuery({
 });
 
 export const privatelyGetAllImages = internalQuery({
-  args: {},
-  handler: async (ctx) => {
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
     return await ctx.db
       .query("files")
       .filter((q) => q.gte(q.field("type"), "image"))
       .order("desc")
-      .collect();
+      .paginate(args.paginationOpts);
   },
 });
 

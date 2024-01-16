@@ -31,7 +31,7 @@ export const afterSave = action({
 });
 
 export const compareImages = action({
-  args: { machineToken: v.string() },
+  args: { machineToken: v.string(), start: v.optional(v.string()) },
   handler: async (ctx, args) => {
     await validateMachineToken(ctx, args.machineToken);
 
@@ -55,12 +55,15 @@ export const compareImages = action({
       return;
     }
 
-    const allImages = await ctx.runQuery(internal.files.privatelyGetAllImages);
+    const allImages = await ctx.runQuery(internal.files.privatelyGetAllImages, {
+      paginationOpts: { numItems: 100, cursor: args.start ?? null },
+    });
+    console.log(allImages);
     const allExistingSimilarImages = await ctx.runQuery(
       internal.imageComparisons.privatelyGetAllImageComparisons
     );
 
-    const allImageIds = allImages.map((image) => image._id);
+    const allImageIds = allImages.page.map((image) => image._id);
     const imageSetsToCompare = createUniqueCombinations(allImageIds);
 
     const filteredImagesToCompare = imageSetsToCompare.filter((imageSet) => {
@@ -79,8 +82,12 @@ export const compareImages = action({
     const comparedImages = await asyncMap(
       filteredImagesToCompare,
       async (imageSet) => {
-        const image1 = allImages.find((image) => image._id === imageSet[0]);
-        const image2 = allImages.find((image) => image._id === imageSet[1]);
+        const image1 = allImages.page.find(
+          (image) => image._id === imageSet[0]
+        );
+        const image2 = allImages.page.find(
+          (image) => image._id === imageSet[1]
+        );
 
         if (!image1 || !image2) return;
         const jimpImage1 = await Jimp.read(image1.url);
