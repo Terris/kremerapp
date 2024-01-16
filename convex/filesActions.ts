@@ -39,13 +39,13 @@ export const compareImages = action({
   handler: async (ctx, args) => {
     await validateMachineToken(ctx, args.machineToken);
 
-    const lastUploadedImage = await ctx.runQuery(
-      internal.files.privatelyGetLastUploadedImage
-    );
-    const lastJobRun = await ctx.runQuery(
-      internal.cronJobRuns.privatelyGetLastJobRunByName,
-      { jobName: "compare_images" }
-    );
+    // const lastUploadedImage = await ctx.runQuery(
+    //   internal.files.privatelyGetLastUploadedImage
+    // );
+    // const lastJobRun = await ctx.runQuery(
+    //   internal.cronJobRuns.privatelyGetLastJobRunByName,
+    //   { jobName: "compare_images" }
+    // );
 
     // if (
     //   !!lastUploadedImage &&
