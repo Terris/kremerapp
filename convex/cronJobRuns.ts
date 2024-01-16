@@ -16,10 +16,9 @@ export const privatelyGetLastJobRunByName = internalQuery({
 export const privatelyInsertCronJobRun = internalMutation({
   args: { jobName: v.string(), result: v.optional(v.string()) },
   handler: async (ctx, args) => {
-    await ctx.db.insert("cronJobRuns", {
+    return await ctx.db.insert("cronJobRuns", {
       jobName: args.jobName,
       result: args.result,
     });
-    return true;
   },
 });
