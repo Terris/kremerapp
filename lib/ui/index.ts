@@ -10,6 +10,7 @@ export * from "./KremerCrest";
 export * from "./Label";
 export * from "./Loader";
 export * from "./LoadingScreen";
+export * from "./Slider";
 export * from "./Switch";
 export * from "./Table";
 export * from "./Text";

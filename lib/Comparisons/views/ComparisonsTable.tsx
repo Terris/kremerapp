@@ -5,7 +5,6 @@ import { AdminTable } from "@/lib/Admin";
 import { FileDoc, FileId } from "@/lib/Files";
 import {
   CopyToClipboardButton,
-  Input,
   Text,
   TextLink,
   Tooltip,
@@ -13,7 +12,6 @@ import {
   TooltipTrigger,
 } from "@/lib/ui";
 import Image from "next/image";
-import { useState } from "react";
 
 interface ComparisonRow {
   _id: string;
@@ -30,12 +28,40 @@ const columns: ColumnDef<ComparisonRow>[] = [
   {
     accessorKey: "image1Id",
     header: "Image 1 ID",
-    cell: ({ row }) => row.original.image1Id,
+    cell: ({ row }) => (
+      <div className="max-w-[100px] flex items-center justify-between">
+        <Text className="truncate pr-2">{row.original.image1Id}</Text>
+        <Tooltip>
+          <TooltipTrigger>
+            <CopyToClipboardButton
+              textToCopy={row.original.image1Id}
+              variant="ghost"
+              size="sm"
+            />
+          </TooltipTrigger>
+          <TooltipContent>Copy ID to clipboard</TooltipContent>
+        </Tooltip>
+      </div>
+    ),
   },
   {
     accessorKey: "image2Id",
     header: "Image 2 ID",
-    cell: ({ row }) => row.original.image2Id,
+    cell: ({ row }) => (
+      <div className="max-w-[100px] flex items-center justify-between">
+        <Text className="truncate pr-2">{row.original.image2Id}</Text>
+        <Tooltip>
+          <TooltipTrigger>
+            <CopyToClipboardButton
+              textToCopy={row.original.image2Id}
+              variant="ghost"
+              size="sm"
+            />
+          </TooltipTrigger>
+          <TooltipContent>Copy ID to clipboard</TooltipContent>
+        </Tooltip>
+      </div>
+    ),
   },
   {
     accessorKey: "image1.url",
@@ -111,22 +137,15 @@ const columns: ColumnDef<ComparisonRow>[] = [
   },
 ];
 
-export const ComparisonsTable = () => {
-  const [maxAverage, setMaxAverage] = useState(0.5);
+export const ComparisonsTable = ({
+  maxAverage = 1,
+}: {
+  maxAverage?: number;
+}) => {
   const comparisonsData = useQuery(
     api.imageComparisons.findAllCloseComparisons,
     { maxAverage }
   );
   if (!comparisonsData) return null;
-  return (
-    <>
-      <Input
-        value={maxAverage}
-        onChange={(e) => setMaxAverage(Number(e.currentTarget.value))}
-        type="number"
-        className="my-4 w-[100px]"
-      />
-      <AdminTable columns={columns} data={comparisonsData} />
-    </>
-  );
+  return <AdminTable columns={columns} data={comparisonsData} />;
 };

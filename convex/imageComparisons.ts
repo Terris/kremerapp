@@ -35,7 +35,7 @@ export const findAllCloseComparisons = query({
     validateIdentity(ctx, { requireAdminRole: true });
     const comparisons = await ctx.db
       .query("imageComparisons")
-      .filter((q) => q.lt(q.field("average"), args.maxAverage || 1))
+      .filter((q) => q.lte(q.field("average"), args.maxAverage || 1))
       .collect();
     const comparisonsWithFiles = asyncMap(comparisons, async (comparison) => {
       const image1 = await ctx.db.get(comparison.image1Id);
