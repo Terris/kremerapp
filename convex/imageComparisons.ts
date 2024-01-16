@@ -29,13 +29,30 @@ export const all = query({
 });
 
 export const findAllCloseComparisons = query({
-  args: {},
+  args: { maxDistance: v.optional(v.number()) },
   handler: async (ctx, args) => {
     validateIdentity(ctx, { requireAdminRole: true });
-    return await ctx.db
+    const comparisons = await ctx.db
       .query("imageComparisons")
-      .filter((q) => q.lt(q.field("distance"), 1))
+      .filter((q) => q.lt(q.field("distance"), args.maxDistance || 1))
       .collect();
+    const comparisonsWithFiles = asyncMap(comparisons, async (comparison) => {
+      const image1 = await ctx.db.get(comparison.image1Id);
+      const image2 = await ctx.db.get(comparison.image2Id);
+
+      if (!image1 || !image2) {
+        throw new Error(
+          `Image comparison ${comparison._id} refers to a file that does not exist`
+        );
+      }
+
+      return {
+        ...comparison,
+        image1,
+        image2,
+      };
+    });
+    return comparisonsWithFiles;
   },
 });
 

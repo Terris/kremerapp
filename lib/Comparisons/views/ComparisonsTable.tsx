@@ -5,6 +5,7 @@ import { AdminTable } from "@/lib/Admin";
 import { FileDoc, FileId } from "@/lib/Files";
 import {
   CopyToClipboardButton,
+  Input,
   Text,
   TextLink,
   Tooltip,
@@ -12,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/lib/ui";
 import Image from "next/image";
+import { useState } from "react";
 
 interface ComparisonRow {
   _id: string;
@@ -98,7 +100,21 @@ const columns: ColumnDef<ComparisonRow>[] = [
 ];
 
 export const ComparisonsTable = () => {
-  const comparisonsData = useQuery(api.imageComparisons.all);
+  const [maxDistance, setMaxDistance] = useState(0.5);
+  const comparisonsData = useQuery(
+    api.imageComparisons.findAllCloseComparisons,
+    { maxDistance: maxDistance }
+  );
   if (!comparisonsData) return null;
-  return <AdminTable columns={columns} data={comparisonsData} />;
+  return (
+    <>
+      <Input
+        value={maxDistance}
+        onChange={(e) => setMaxDistance(Number(e.currentTarget.value))}
+        type="number"
+        className="my-4 w-[100px]"
+      />
+      <AdminTable columns={columns} data={comparisonsData} />
+    </>
+  );
 };
