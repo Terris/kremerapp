@@ -21,6 +21,7 @@ export default defineSchema({
     ),
     description: v.optional(v.string()),
     userId: v.id("users"),
+    hash: v.optional(v.string()),
   }),
   tags: defineTable({
     name: v.string(),

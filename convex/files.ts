@@ -1,11 +1,11 @@
 import { v } from "convex/values";
-import { internal } from "./_generated/api";
 import {
   internalMutation,
   internalQuery,
   mutation,
   query,
 } from "./_generated/server";
+import { api } from "./_generated/api";
 import { validateIdentity } from "./lib/authorization";
 import { asyncMap, pruneNull } from "convex-helpers";
 import { Id } from "./_generated/dataModel";
@@ -121,11 +121,11 @@ export const create = mutation({
   handler: async (ctx, { uploads }) => {
     await validateIdentity(ctx);
     // save a file record for each upload
-    return await asyncMap(
+    await asyncMap(
       uploads,
       async ({ url, fileName, mimeType, type, size, dimensions, userId }) => {
         if (!url) throw new Error("Storage file url not found");
-        return ctx.db.insert("files", {
+        const fileId = await ctx.db.insert("files", {
           url,
           fileName,
           mimeType,
@@ -134,8 +134,12 @@ export const create = mutation({
           dimensions,
           userId,
         });
+        await ctx.scheduler.runAfter(0, api.filesActions.afterSave, {
+          fileId,
+        });
       }
     );
+    return true;
   },
 });
 
@@ -162,6 +166,23 @@ export const deleteById = mutation({
   handler: async (ctx, { id }) => {
     await validateIdentity(ctx);
     await ctx.db.delete(id);
+    return true;
+  },
+});
+
+// PRIVATE
+
+export const privatelyGetFile = internalQuery({
+  args: { fileId: v.id("files") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.fileId);
+  },
+});
+
+export const privatelySetFileHash = internalMutation({
+  args: { fileId: v.id("files"), hash: v.string() },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.fileId, { hash: args.hash });
     return true;
   },
 });

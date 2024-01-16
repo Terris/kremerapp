@@ -17,9 +17,12 @@ import type {
 import type * as comments from "../comments.js";
 import type * as fileTags from "../fileTags.js";
 import type * as files from "../files.js";
+import type * as filesActions from "../filesActions.js";
 import type * as lib_authorization from "../lib/authorization.js";
+import type * as lib_migrations from "../lib/migrations.js";
 import type * as lib_relationships from "../lib/relationships.js";
 import type * as lib_utils from "../lib/utils.js";
+import type * as migrations from "../migrations.js";
 import type * as tags from "../tags.js";
 import type * as users from "../users.js";
 
@@ -35,9 +38,12 @@ declare const fullApi: ApiFromModules<{
   comments: typeof comments;
   fileTags: typeof fileTags;
   files: typeof files;
+  filesActions: typeof filesActions;
   "lib/authorization": typeof lib_authorization;
+  "lib/migrations": typeof lib_migrations;
   "lib/relationships": typeof lib_relationships;
   "lib/utils": typeof lib_utils;
+  migrations: typeof migrations;
   tags: typeof tags;
   users: typeof users;
 }>;
