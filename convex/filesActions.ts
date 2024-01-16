@@ -39,25 +39,25 @@ export const compareImages = action({
   handler: async (ctx, args) => {
     await validateMachineToken(ctx, args.machineToken);
 
-    // const lastUploadedImage = await ctx.runQuery(
-    //   internal.files.privatelyGetLastUploadedImage
-    // );
-    // const lastJobRun = await ctx.runQuery(
-    //   internal.cronJobRuns.privatelyGetLastJobRunByName,
-    //   { jobName: "compare_images" }
-    // );
+    const lastUploadedImage = await ctx.runQuery(
+      internal.files.privatelyGetLastUploadedImage
+    );
+    const lastJobRun = await ctx.runQuery(
+      internal.cronJobRuns.privatelyGetLastJobRunByName,
+      { jobName: "compare_images" }
+    );
 
-    // if (
-    //   !!lastUploadedImage &&
-    //   !!lastJobRun &&
-    //   lastUploadedImage?._creationTime < lastJobRun?._creationTime
-    // ) {
-    //   await ctx.runMutation(internal.cronJobRuns.privatelyInsertCronJobRun, {
-    //     jobName: "compare_images",
-    //     result: `No new images to compare`,
-    //   });
-    //   return;
-    // }
+    if (
+      !!lastUploadedImage &&
+      !!lastJobRun &&
+      lastUploadedImage?._creationTime < lastJobRun?._creationTime
+    ) {
+      await ctx.runMutation(internal.cronJobRuns.privatelyInsertCronJobRun, {
+        jobName: "compare_images",
+        result: `No new images to compare`,
+      });
+      return;
+    }
 
     const allImages = await ctx.runQuery(
       internal.files.privatelyGetAllPaginatedImages,
@@ -69,10 +69,10 @@ export const compareImages = action({
       }
     );
     console.log("allImages", allImages);
+
     const allExistingSimilarImages = await ctx.runQuery(
       internal.imageComparisons.privatelyGetAllImageComparisons
     );
-    console.log("allExistingSimilarImages", allExistingSimilarImages);
 
     // const allImageIds = allImages.page.map((image) => image._id);
     // const imageSetsToCompare = createUniqueCombinations(allImageIds);
