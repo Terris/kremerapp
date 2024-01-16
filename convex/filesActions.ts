@@ -68,7 +68,6 @@ export const compareImages = action({
         },
       }
     );
-    console.log("images pagination", allImages);
 
     const allExistingSimilarImages = await ctx.runQuery(
       internal.imageComparisons.privatelyGetAllImageComparisons
@@ -119,6 +118,7 @@ export const compareImages = action({
         );
       }
     );
+
     await ctx.runMutation(internal.cronJobRuns.privatelyInsertCronJobRun, {
       jobName: "compare_images",
       result: `Compared ${comparedImages.length} images`,
