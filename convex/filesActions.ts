@@ -68,7 +68,6 @@ export const compareImages = action({
         },
       }
     );
-    console.log("allImages", allImages);
 
     const allExistingSimilarImages = await ctx.runQuery(
       internal.imageComparisons.privatelyGetAllImageComparisons
@@ -101,6 +100,8 @@ export const compareImages = action({
         );
 
         if (!image1 || !image2) return;
+        console.log(image1.url);
+        console.log(image2.url);
         const jimpImage1 = await Jimp.read(image1.url);
         const jimpImage2 = await Jimp.read(image2.url);
         const distance = Jimp.distance(jimpImage1, jimpImage2);
