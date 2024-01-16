@@ -1,9 +1,9 @@
 "use node";
 
 import Jimp from "jimp";
-import { action, internalMutation, internalQuery } from "./_generated/server";
+import { action } from "./_generated/server";
 import { v } from "convex/values";
-import { internal } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import { validateMachineToken } from "./lib/authorization";
 import { asyncMap } from "convex-helpers";
 import { createUniqueCombinations } from "./lib/utils";
@@ -39,25 +39,25 @@ export const compareImages = action({
   handler: async (ctx, args) => {
     await validateMachineToken(ctx, args.machineToken);
 
-    const lastUploadedImage = await ctx.runQuery(
-      internal.files.privatelyGetLastUploadedImage
-    );
-    const lastJobRun = await ctx.runQuery(
-      internal.cronJobRuns.privatelyGetLastJobRunByName,
-      { jobName: "compare_images" }
-    );
+    // const lastUploadedImage = await ctx.runQuery(
+    //   internal.files.privatelyGetLastUploadedImage
+    // );
+    // const lastJobRun = await ctx.runQuery(
+    //   internal.cronJobRuns.privatelyGetLastJobRunByName,
+    //   { jobName: "compare_images" }
+    // );
 
-    if (
-      !!lastUploadedImage &&
-      !!lastJobRun &&
-      lastUploadedImage?._creationTime < lastJobRun?._creationTime
-    ) {
-      await ctx.runMutation(internal.cronJobRuns.privatelyInsertCronJobRun, {
-        jobName: "compare_images",
-        result: `No new images to compare`,
-      });
-      return;
-    }
+    // if (
+    //   !!lastUploadedImage &&
+    //   !!lastJobRun &&
+    //   lastUploadedImage?._creationTime < lastJobRun?._creationTime
+    // ) {
+    //   await ctx.runMutation(internal.cronJobRuns.privatelyInsertCronJobRun, {
+    //     jobName: "compare_images",
+    //     result: `No new images to compare`,
+    //   });
+    //   return;
+    // }
 
     const allImages = await ctx.runQuery(
       internal.files.privatelyGetAllPaginatedImages,
@@ -123,6 +123,14 @@ export const compareImages = action({
       jobName: "compare_images",
       result: `Compared ${comparedImages.length} images`,
     });
+
+    if (allImages.continueCursor) {
+      await ctx.scheduler.runAfter(5000, api.filesActions.compareImages, {
+        machineToken: process.env.CONVEX_MACHINE_TOKEN!,
+        pageSize: 2,
+        cursor: allImages.continueCursor,
+      });
+    }
 
     return true;
   },
