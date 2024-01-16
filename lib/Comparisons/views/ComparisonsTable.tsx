@@ -64,12 +64,12 @@ const columns: ColumnDef<ComparisonRow>[] = [
     ),
   },
   {
-    accessorKey: "image1.url",
+    accessorKey: "image1._id",
     header: "Thumb 1",
     cell: ({ row }) => {
       return (
         <TextLink
-          href={`/admin/files/${row.original._id}`}
+          href={`/admin/files/${row.original.image1Id}`}
           className="w-[60px] h-[60px] block relative"
         >
           <Image
@@ -83,12 +83,12 @@ const columns: ColumnDef<ComparisonRow>[] = [
     },
   },
   {
-    accessorKey: "image2.url",
+    accessorKey: "image2._id",
     header: "Thumb 2",
     cell: ({ row }) => {
       return (
         <TextLink
-          href={`/admin/files/${row.original._id}`}
+          href={`/admin/files/${row.original.image2Id}`}
           className="w-[60px] h-[60px] block relative"
         >
           <Image
