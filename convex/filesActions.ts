@@ -68,57 +68,58 @@ export const compareImages = action({
         },
       }
     );
-    const allExistingSimilarImages = await ctx.runQuery(
-      internal.imageComparisons.privatelyGetAllImageComparisons
-    );
+    // const allExistingSimilarImages = await ctx.runQuery(
+    //   internal.imageComparisons.privatelyGetAllImageComparisons
+    // );
 
-    const allImageIds = allImages.page.map((image) => image._id);
-    const imageSetsToCompare = createUniqueCombinations(allImageIds);
+    // const allImageIds = allImages.page.map((image) => image._id);
+    // const imageSetsToCompare = createUniqueCombinations(allImageIds);
 
-    const filteredImagesToCompare = imageSetsToCompare.filter((imageSet) => {
-      // remove sets that are already in the imageComparisons table
-      const image1Id = imageSet[0];
-      const image2Id = imageSet[1];
-      const dbHasExistingSet = allExistingSimilarImages.some(
-        (existingImageSet) =>
-          (existingImageSet.image1Id === image1Id &&
-            existingImageSet.image2Id === image2Id) ||
-          (existingImageSet.image1Id === image2Id &&
-            existingImageSet.image2Id === image1Id)
-      );
-      return !dbHasExistingSet;
-    });
-    const comparedImages = await asyncMap(
-      filteredImagesToCompare,
-      async (imageSet) => {
-        const image1 = allImages.page.find(
-          (image) => image._id === imageSet[0]
-        );
-        const image2 = allImages.page.find(
-          (image) => image._id === imageSet[1]
-        );
+    // const filteredImagesToCompare = imageSetsToCompare.filter((imageSet) => {
+    //   // remove sets that are already in the imageComparisons table
+    //   const image1Id = imageSet[0];
+    //   const image2Id = imageSet[1];
+    //   const dbHasExistingSet = allExistingSimilarImages.some(
+    //     (existingImageSet) =>
+    //       (existingImageSet.image1Id === image1Id &&
+    //         existingImageSet.image2Id === image2Id) ||
+    //       (existingImageSet.image1Id === image2Id &&
+    //         existingImageSet.image2Id === image1Id)
+    //   );
+    //   return !dbHasExistingSet;
+    // });
+    // const comparedImages = await asyncMap(
+    //   filteredImagesToCompare,
+    //   async (imageSet) => {
+    //     const image1 = allImages.page.find(
+    //       (image) => image._id === imageSet[0]
+    //     );
+    //     const image2 = allImages.page.find(
+    //       (image) => image._id === imageSet[1]
+    //     );
 
-        if (!image1 || !image2) return;
-        const jimpImage1 = await Jimp.read(image1.url);
-        const jimpImage2 = await Jimp.read(image2.url);
-        const distance = Jimp.distance(jimpImage1, jimpImage2);
-        const diff = Jimp.diff(jimpImage1, jimpImage2);
+    //     if (!image1 || !image2) return;
+    //     const jimpImage1 = await Jimp.read(image1.url);
+    //     const jimpImage2 = await Jimp.read(image2.url);
+    //     const distance = Jimp.distance(jimpImage1, jimpImage2);
+    //     const diff = Jimp.diff(jimpImage1, jimpImage2);
 
-        await ctx.runMutation(
-          internal.imageComparisons.privatelyInsertImageComparisons,
-          {
-            image1Id: image1._id,
-            image2Id: image2._id,
-            distance,
-            diffPercent: diff.percent,
-          }
-        );
-      }
-    );
-    await ctx.runMutation(internal.cronJobRuns.privatelyInsertCronJobRun, {
-      jobName: "compare_images",
-      result: `Compared ${comparedImages.length} images`,
-    });
+    //     await ctx.runMutation(
+    //       internal.imageComparisons.privatelyInsertImageComparisons,
+    //       {
+    //         image1Id: image1._id,
+    //         image2Id: image2._id,
+    //         distance,
+    //         diffPercent: diff.percent,
+    //       }
+    //     );
+    //   }
+    // );
+    // await ctx.runMutation(internal.cronJobRuns.privatelyInsertCronJobRun, {
+    //   jobName: "compare_images",
+    //   result: `Compared ${comparedImages.length} images`,
+    // });
+    console.log("allImages", allImages);
     return true;
   },
 });
