@@ -1,4 +1,6 @@
-import { QueryCtx } from "../_generated/server";
+import { internal } from "../_generated/api";
+import { Id } from "../_generated/dataModel";
+import { QueryCtx, ActionCtx } from "../_generated/server";
 
 export async function validateIdentity(
   ctx: QueryCtx,
@@ -26,4 +28,18 @@ export async function validateIdentity(
   }
 
   return { identity, user };
+}
+
+export async function validateMachineToken(
+  ctx: ActionCtx,
+  machineToken: string
+) {
+  console.log(machineToken);
+  const validMachineToken = await ctx.runQuery(
+    internal.machineTokens.privatelyGetMachineToken,
+    {
+      id: machineToken as Id<"machineTokens">,
+    }
+  );
+  if (!validMachineToken) throw new Error("Invalid machine token");
 }

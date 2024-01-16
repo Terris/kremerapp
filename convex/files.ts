@@ -134,8 +134,10 @@ export const create = mutation({
           dimensions,
           userId,
         });
+
         await ctx.scheduler.runAfter(0, api.filesActions.afterSave, {
           fileId,
+          machineToken: process.env.CONVEX_MACHINE_TOKEN as Id<"machineTokens">,
         });
       }
     );
@@ -176,6 +178,13 @@ export const privatelyGetFile = internalQuery({
   args: { fileId: v.id("files") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.fileId);
+  },
+});
+
+export const privatelyGetAllFiles = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("files").collect();
   },
 });
 

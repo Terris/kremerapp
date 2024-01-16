@@ -37,4 +37,7 @@ export default defineSchema({
     userId: v.id("users"),
     text: v.string(),
   }).index("by_file", ["fileId"]),
+  machineTokens: defineTable({
+    name: v.string(),
+  }),
 });
