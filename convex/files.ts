@@ -188,6 +188,28 @@ export const privatelyGetAllFiles = internalQuery({
   },
 });
 
+export const privatelyGetAllImages = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("files")
+      .filter((q) => q.gte(q.field("type"), "image"))
+      .order("desc")
+      .collect();
+  },
+});
+
+export const privatelyGetLastUploadedImage = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("files")
+      .filter((q) => q.eq(q.field("type"), "image"))
+      .order("desc")
+      .first();
+  },
+});
+
 export const privatelySetFileHash = internalMutation({
   args: { fileId: v.id("files"), hash: v.string() },
   handler: async (ctx, args) => {

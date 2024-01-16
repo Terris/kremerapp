@@ -26,12 +26,20 @@ export function Masthead() {
               Photos
             </TextLink>
             {isAdmin && (
-              <TextLink
-                href="/admin/files"
-                className="font-bold flex flex-row items-center"
-              >
-                <Lock className="mr-1 w-4 h-4" /> All Files
-              </TextLink>
+              <>
+                <TextLink
+                  href="/admin/files"
+                  className="font-bold flex flex-row items-center"
+                >
+                  <Lock className="mr-1 w-4 h-4" /> All Files
+                </TextLink>
+                <TextLink
+                  href="/admin/comparisons"
+                  className="font-bold flex flex-row items-center"
+                >
+                  <Lock className="mr-1 w-4 h-4" /> Comparisons
+                </TextLink>
+              </>
             )}
           </div>
           <UploadFileButton variant="secondary" size="sm" className="mr-8" />

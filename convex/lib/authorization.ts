@@ -34,7 +34,6 @@ export async function validateMachineToken(
   ctx: ActionCtx,
   machineToken: string
 ) {
-  console.log(machineToken);
   const validMachineToken = await ctx.runQuery(
     internal.machineTokens.privatelyGetMachineToken,
     {

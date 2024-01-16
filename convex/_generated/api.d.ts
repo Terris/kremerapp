@@ -15,10 +15,12 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as comments from "../comments.js";
+import type * as cronJobRuns from "../cronJobRuns.js";
 import type * as crons from "../crons.js";
 import type * as fileTags from "../fileTags.js";
 import type * as files from "../files.js";
 import type * as filesActions from "../filesActions.js";
+import type * as imageComparisons from "../imageComparisons.js";
 import type * as lib_authorization from "../lib/authorization.js";
 import type * as lib_relationships from "../lib/relationships.js";
 import type * as lib_utils from "../lib/utils.js";
@@ -37,10 +39,12 @@ import type * as users from "../users.js";
  */
 declare const fullApi: ApiFromModules<{
   comments: typeof comments;
+  cronJobRuns: typeof cronJobRuns;
   crons: typeof crons;
   fileTags: typeof fileTags;
   files: typeof files;
   filesActions: typeof filesActions;
+  imageComparisons: typeof imageComparisons;
   "lib/authorization": typeof lib_authorization;
   "lib/relationships": typeof lib_relationships;
   "lib/utils": typeof lib_utils;

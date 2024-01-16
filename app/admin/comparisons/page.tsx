@@ -1,6 +1,6 @@
 "use client";
 import { AdminLayout } from "@/lib/Admin";
-import { FilesTable } from "@/lib/Files";
+import { ComparisonsTable } from "@/lib/Comparisons/views/ComparisonsTable";
 import { Breadcrumbs } from "@/lib/ui";
 
 export default function FilesPage() {
@@ -10,12 +10,12 @@ export default function FilesPage() {
         <Breadcrumbs
           breadcrumbs={[
             { href: "/admin", label: "Admin" },
-            { href: "/admin/files", label: "All Files" },
+            { href: "/admin/comparisons", label: "Comparisons" },
           ]}
         />
       </AdminLayout.BreadcrumbsWrapper>
       <AdminLayout.TableWrapper>
-        <FilesTable />
+        <ComparisonsTable />
       </AdminLayout.TableWrapper>
     </>
   );

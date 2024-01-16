@@ -40,4 +40,13 @@ export default defineSchema({
   machineTokens: defineTable({
     name: v.string(),
   }),
+  imageComparisons: defineTable({
+    image1Id: v.id("files"),
+    image2Id: v.id("files"),
+    distance: v.number(),
+  }),
+  cronJobRuns: defineTable({
+    jobName: v.string(),
+    result: v.optional(v.string()),
+  }),
 });
