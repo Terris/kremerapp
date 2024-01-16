@@ -74,22 +74,22 @@ export const compareImages = action({
       internal.imageComparisons.privatelyGetAllImageComparisons
     );
 
-    // const allImageIds = allImages.page.map((image) => image._id);
-    // const imageSetsToCompare = createUniqueCombinations(allImageIds);
+    const allImageIds = allImages.page.map((image) => image._id);
+    const imageSetsToCompare = createUniqueCombinations(allImageIds);
 
-    // const filteredImagesToCompare = imageSetsToCompare.filter((imageSet) => {
-    //   // remove sets that are already in the imageComparisons table
-    //   const image1Id = imageSet[0];
-    //   const image2Id = imageSet[1];
-    //   const dbHasExistingSet = allExistingSimilarImages.some(
-    //     (existingImageSet) =>
-    //       (existingImageSet.image1Id === image1Id &&
-    //         existingImageSet.image2Id === image2Id) ||
-    //       (existingImageSet.image1Id === image2Id &&
-    //         existingImageSet.image2Id === image1Id)
-    //   );
-    //   return !dbHasExistingSet;
-    // });
+    const filteredImagesToCompare = imageSetsToCompare.filter((imageSet) => {
+      // remove sets that are already in the imageComparisons table
+      const image1Id = imageSet[0];
+      const image2Id = imageSet[1];
+      const dbHasExistingSet = allExistingSimilarImages.some(
+        (existingImageSet) =>
+          (existingImageSet.image1Id === image1Id &&
+            existingImageSet.image2Id === image2Id) ||
+          (existingImageSet.image1Id === image2Id &&
+            existingImageSet.image2Id === image1Id)
+      );
+      return !dbHasExistingSet;
+    });
     // const comparedImages = await asyncMap(
     //   filteredImagesToCompare,
     //   async (imageSet) => {
