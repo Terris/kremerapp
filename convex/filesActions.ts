@@ -34,7 +34,7 @@ export const compareImages = action({
   args: {
     machineToken: v.string(),
     pageSize: v.number(),
-    cursor: v.optional(v.string() || v.null()),
+    cursor: v.union(v.string(), v.null()),
   },
   handler: async (ctx, args) => {
     await validateMachineToken(ctx, args.machineToken);
