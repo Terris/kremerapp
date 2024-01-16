@@ -14,12 +14,14 @@ export const afterSave = action({
     const fileUrl = file?.url;
     if (!fileUrl) throw new Error("File not found");
     // Set Image Hash
-    const image = await Jimp.read(fileUrl);
-    const imageHash = image.hash();
-    await ctx.runMutation(internal.files.privatelySetFileHash, {
-      fileId: args.fileId,
-      hash: imageHash,
-    });
+    if (file.type === "image") {
+      const image = await Jimp.read(fileUrl);
+      const imageHash = image.hash();
+      await ctx.runMutation(internal.files.privatelySetFileHash, {
+        fileId: args.fileId,
+        hash: imageHash,
+      });
+    }
     return true;
   },
 });
