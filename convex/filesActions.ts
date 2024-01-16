@@ -68,9 +68,11 @@ export const compareImages = action({
         },
       }
     );
-    // const allExistingSimilarImages = await ctx.runQuery(
-    //   internal.imageComparisons.privatelyGetAllImageComparisons
-    // );
+    console.log("allImages", allImages);
+    const allExistingSimilarImages = await ctx.runQuery(
+      internal.imageComparisons.privatelyGetAllImageComparisons
+    );
+    console.log("allExistingSimilarImages", allExistingSimilarImages);
 
     // const allImageIds = allImages.page.map((image) => image._id);
     // const imageSetsToCompare = createUniqueCombinations(allImageIds);
@@ -119,7 +121,7 @@ export const compareImages = action({
     //   jobName: "compare_images",
     //   result: `Compared ${comparedImages.length} images`,
     // });
-    console.log("allImages", allImages);
+
     return true;
   },
 });
